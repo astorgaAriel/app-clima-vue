@@ -90,6 +90,7 @@ https://clima-vue-ariel.vercel.app/
 
 ## Estructura del Proyecto
 
+```
 app-clima-vue/
 │
 ├── index.html                   # Punto de entrada HTML
@@ -144,7 +145,7 @@ app-clima-vue/
             ├── viento.png
             ├── gota.png
             └── temp.png
-
+```
 ## Configuración Recomendada
 
 ### IDE Setup
