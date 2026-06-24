@@ -5,7 +5,8 @@ import CityDetail from './components/CityDetail.vue'
 const routes = [
   {
     path: '/',
-    component: MainLayout
+    component: MainLayout,
+    alias: '/home'
   },
   {
     path: '/:nombre',

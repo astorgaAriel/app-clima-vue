@@ -1,38 +1,148 @@
-# app-clima-vue
+# App Clima Vue
 
-This template should help get you started developing with Vue 3 in Vite.
+Aplicación web interactiva para consultar información meteorológica de diferentes regiones y ciudades, desarrollada con **Vue 3** y **Vite**.
 
-## Recommended IDE Setup
+## Descripción
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+**App Clima Vue** es una aplicación moderna construida con Vue 3 que permite:
+- Visualizar información meteorológica por regiones
+- Consultar detalles climáticos de ciudades específicas
+- Interfaz responsive y dinámica
+- Integración con APIs de clima
 
-## Recommended Browser Setup
+### Tecnologías
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+- **Vue 3**: Framework progresivo para interfaces de usuario
+- **Vue Router 5**: Enrutamiento y navegación entre vistas
+- **Vite**: Herramienta de compilación rápida y eficiente
+- **JavaScript ES6+**: Composables y sintaxis moderna
 
-## Customize configuration
+## Rutas y Vistas
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+La aplicación cuenta con las siguientes rutas principales:
 
-## Project Setup
+| Ruta | Componente | Descripción |
+|------|-----------|-------------|
+| `/` o `/home` | `MainLayout` | Vista principal con mapa de regiones y búsqueda de ciudades |
+| `/:nombre` | `CityDetail` | Detalle climático de una ciudad específica |
 
-```sh
+### Componentes Principales
+
+- **MainLayout.vue**: Diseño principal con navegación
+- **CityDetail.vue**: Página de detalle de ciudad
+- **Navbar.vue**: Barra de navegación
+- **MapRegion.vue**: Visualización interactiva de regiones
+- **RegionView.vue**: Vista de región seleccionada
+- **Card.vue**: Componente reutilizable para mostrar información
+- **AlertaClima.vue**: Alertas climáticas
+
+## 🚀 Cómo Ejecutar
+
+### Requisitos Previos
+
+- Node.js >= 20.19.0 o >= 22.12.0
+- npm o yarn
+
+### Instalación y Desarrollo
+
+```bash
+# Clonar el repositorio
+git clone <URL_DEL_REPOSITORIO>
+cd app-clima-vue
+
+# Instalar dependencias
 npm install
-```
 
-### Compile and Hot-Reload for Development
-
-```sh
+# Ejecutar en modo desarrollo (hot-reload)
 npm run dev
 ```
 
-### Compile and Minify for Production
+La aplicación estará disponible en `http://localhost:5173`
 
-```sh
+### Compilación para Producción
+
+```bash
+# Generar build optimizado
 npm run build
+
+# Vista previa del build de producción
+npm run preview
 ```
+
+Los archivos compilados estarán en la carpeta `dist/`
+
+## 🌐 Despliegue
+
+### Opción 1: Vercel (Recomendado)
+
+
+
+2. Ejecutar: `npm run build && git add dist && git commit -m "Deploy" && git push`
+
+### Opción 4: Servidor Propio (Node.js)
+
+1. Compilar proyecto: `npm run build`
+2. Instalar servidor: `npm install -g serve`
+3. Ejecutar: `serve -s dist`
+
+## 📁 Estructura del Proyecto
+
+```
+app-clima-vue/
+├── src/
+│   ├── components/          # Componentes Vue
+│   ├── composables/         # Lógica reutilizable
+│   ├── services/            # Servicios (API, datos)
+│   ├── assets/              # Imágenes, estilos
+│   ├── App.vue              # Componente raíz
+│   ├── main.js              # Punto de entrada
+│   └── router.js            # Configuración de rutas
+├── public/                  # Archivos estáticos
+├── dist/                    # Build de producción
+├── vite.config.js           # Configuración de Vite
+├── jsconfig.json            # Configuración de JavaScript
+└── package.json             # Dependencias y scripts
+```
+
+## 🛠️ Configuración Recomendada
+
+### IDE Setup
+
+- [VS Code](https://code.visualstudio.com/)
+- Extensión: [Vue - Official](https://marketplace.visualstudio.com/items?itemName=Vue.volar)
+- Desactivar extensión Vetur si está instalada
+
+### DevTools
+
+**Chrome/Edge/Brave:**
+- [Vue.js DevTools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
+
+**Firefox:**
+- [Vue.js DevTools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
+
+## 📝 Scripts Disponibles
+
+| Script | Descripción |
+|--------|-------------|
+| `npm run dev` | Inicia servidor de desarrollo con hot-reload |
+| `npm run build` | Compila para producción |
+| `npm run preview` | Vista previa del build compilado |
+
+## 📚 Referencias
+
+- [Documentación de Vue 3](https://vuejs.org/)
+- [Documentación de Vite](https://vite.dev/)
+- [Vue Router](https://router.vuejs.org/)
+- [Vite Configuration Reference](https://vite.dev/config/)
+
+## 🔗 Repositorio
+
+[GitHub - app-clima-vue](SUSTITUIR_CON_URL_REPO)
+
+## 📄 Licencia
+
+Este proyecto está disponible bajo licencia libre (especificar si aplica)
+
+---
+
+**Desarrollado con ❤️ usando Vue 3 + Vite**
