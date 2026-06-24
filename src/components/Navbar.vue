@@ -48,8 +48,9 @@
           <input 
             v-model="searchQuery"
             type="text" 
-            placeholder="Buscar región"
+            placeholder="Buscar región o ciudad"
             class="search-input"
+            @keydown="searchQuery"
           />
           <button type="submit" class="search-btn">Buscar</button>
         </form>
@@ -60,9 +61,11 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { getCiudadesPrincipales } from '../services/regionData'
 
 const emit = defineEmits(['region-selected'])
+const router = useRouter()
 
 const isMenuOpen = ref(false)
 const isDropdownOpen = ref(false)
@@ -79,16 +82,27 @@ const handleSearch = () => {
   const query = searchQuery.value.toLowerCase().trim()
   if (!query) return
 
-  const found = Object.entries(regions).find(([_, region]) =>
-    region.region.toLowerCase().includes(query)
-  )
+  for (const [regionId, region] of Object.entries(regions)) {
+    // Buscar región
+    if (region.region.toLowerCase().includes(query)) {
+      selectRegion(regionId)
+      searchQuery.value = ''
+      return
+    }
 
-  if (found) {
-    selectRegion(found[0])
-    searchQuery.value = ''
-  } else {
-    alert('Región no encontrada: ' + searchQuery.value)
+    for (const [cityKey, coords] of Object.entries(region.comunas)) {
+      const cityName = cityKey.replace(/_/g, ' ')
+      if (cityName.toLowerCase().includes(query)) {
+        const cityNameWithUnderscore = cityName.replace(/ /g, '_')
+        router.push(`/${cityNameWithUnderscore}`)
+        isMenuOpen.value = false
+        isDropdownOpen.value = false
+        searchQuery.value = ''
+        return
+      }
+    }
   }
+  alert('No encontrado: ' + searchQuery.value)
 }
 </script>
 
