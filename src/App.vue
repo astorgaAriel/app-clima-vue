@@ -1,5 +1,4 @@
 <template>
-  {{ txt }}
   <div id="app" class="app">
     <Navbar @region-selected="selectRegion" />
     
@@ -8,12 +7,11 @@
 </template>
 
 <script setup>
-import { Text } from 'vue';
+
 import Navbar from './components/Navbar.vue'
 import { useGlobalRegion } from './composables/useGlobalRegion'
 
 const { selectRegion } = useGlobalRegion()
-const txt = import.meta.env.VITE_HOLA
 </script>
 
 <style scoped>

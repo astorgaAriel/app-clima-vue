@@ -47,7 +47,7 @@ La aplicación cuenta con las siguientes rutas principales:
 
 ```bash
 # Clonar el repositorio
-git clone <URL_DEL_REPOSITORIO>
+git clone <git@github.com:astorgaAriel/app-clima-vue.git>
 cd app-clima-vue
 
 # Instalar dependencias
@@ -73,9 +73,9 @@ Los archivos compilados estarán en la carpeta `dist/`
 
 ## 🌐 Despliegue
 
-### Opción 1: Vercel (Recomendado)
+### Opción 1: Vercel
 
-
+https://clima-vue-ariel.vercel.app/
 
 2. Ejecutar: `npm run build && git add dist && git commit -m "Deploy" && git push`
 
