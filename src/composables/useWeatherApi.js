@@ -6,7 +6,6 @@ const forecastCache = ref({})
 export function useWeatherAPI() {
   const API_KEY = import.meta.env.VITE_API_KEY;
   const baseURL = import.meta.env.VITE_API_URL;
-  console.log(API_KEY)
 
   const getWeather = async (lat, lon, nombre = '') => {
     const key = `${lat},${lon}`
