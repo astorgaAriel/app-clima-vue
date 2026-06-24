@@ -10,6 +10,9 @@ Aplicación web interactiva para consultar información meteorológica de difere
 - Interfaz responsive y dinámica
 - Integración con APIs de clima
 
+  <img width="1300" height="944" alt="imagen" src="https://github.com/user-attachments/assets/84bf9db1-2071-4ae9-a0a2-e92bb0806518" />
+
+
 ### Tecnologías
 
 - **Vue 3**: Framework progresivo para interfaces de usuario
@@ -36,7 +39,7 @@ La aplicación cuenta con las siguientes rutas principales:
 - **Card.vue**: Componente reutilizable para mostrar información
 - **AlertaClima.vue**: Alertas climáticas
 
-## 🚀 Cómo Ejecutar
+## Cómo Ejecutar
 
 ### Requisitos Previos
 
@@ -71,7 +74,7 @@ npm run preview
 
 Los archivos compilados estarán en la carpeta `dist/`
 
-## 🌐 Despliegue
+## Despliegue
 
 ### Opción 1: Vercel
 
@@ -85,26 +88,64 @@ https://clima-vue-ariel.vercel.app/
 2. Instalar servidor: `npm install -g serve`
 3. Ejecutar: `serve -s dist`
 
-## 📁 Estructura del Proyecto
+## Estructura del Proyecto
 
-```
 app-clima-vue/
-├── src/
-│   ├── components/          # Componentes Vue
-│   ├── composables/         # Lógica reutilizable
-│   ├── services/            # Servicios (API, datos)
-│   ├── assets/              # Imágenes, estilos
-│   ├── App.vue              # Componente raíz
-│   ├── main.js              # Punto de entrada
-│   └── router.js            # Configuración de rutas
-├── public/                  # Archivos estáticos
-├── dist/                    # Build de producción
-├── vite.config.js           # Configuración de Vite
-├── jsconfig.json            # Configuración de JavaScript
-└── package.json             # Dependencias y scripts
-```
+│
+├── index.html                   # Punto de entrada HTML
+├── vite.config.js               # Configuración de Vite
+├── jsconfig.json                # Configuración JavaScript
+├── package.json                 # Dependencias y scripts
+├── vercel.json                  # Configuración de despliegue Vercel
+├── .gitignore                   # Archivos ignorados por Git
+│
+├── public/
+│   └── favicon.ico
+│
+├── .vscode/
+│   ├── extensions.json          # Extensiones recomendadas
+│   └── settings.json
+│
+└── src/
+    ├── main.js                  # Bootstrap: monta la app Vue
+    ├── App.vue                  # Componente raíz (Navbar + RouterView)
+    ├── router.js                # Rutas: / y /:nombre
+    │
+    ├── components/
+    │   ├── Home.vue             # Vista principal (sidebar + contenido)
+    │   ├── CityDetail.vue       # Detalle de ciudad con pronóstico
+    │   ├── Navbar.vue           # Barra de navegación + buscador
+    │   ├── MapRegion.vue        # Mapa SVG interactivo de Chile
+    │   ├── RegionView.vue       # Grid de cards de la región activa
+    │   ├── Card.vue             # Tarjeta de ciudad con clima actual
+    │   └── AlertaClima.vue      # Alertas climáticas de la región
+    │
+    ├── composables/
+    │   ├── useWeatherApi.js     # Llamadas a la API del clima + caché
+    │   ├── useAlert.js          # Lógica de generación de alertas
+    │   ├── useGlobalRegion.js   # Estado global de región activa
+    │   └── useRegion.js         # Utilidades de región
+    │
+    ├── services/
+    │   └── regionData.js        # Datos estáticos de regiones y comunas (lat/lon)
+    │
+    └── assets/
+        ├── css/
+        │   └── style.css        # Estilos globales
+        └── img/
+            ├── logo.png
+            ├── Los-Andes-MOP.webp   # Fondo de CityDetail
+            ├── frio.png
+            ├── lluvia.png
+            ├── Nublado.png
+            ├── ParcialNublado.png
+            ├── Soliado.png
+            ├── tormentaElectrica.png
+            ├── viento.png
+            ├── gota.png
+            └── temp.png
 
-## 🛠️ Configuración Recomendada
+## Configuración Recomendada
 
 ### IDE Setup
 
@@ -120,7 +161,7 @@ app-clima-vue/
 **Firefox:**
 - [Vue.js DevTools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
 
-## 📝 Scripts Disponibles
+##  Scripts Disponibles
 
 | Script | Descripción |
 |--------|-------------|
@@ -128,21 +169,15 @@ app-clima-vue/
 | `npm run build` | Compila para producción |
 | `npm run preview` | Vista previa del build compilado |
 
-## 📚 Referencias
+## Referencias
 
 - [Documentación de Vue 3](https://vuejs.org/)
 - [Documentación de Vite](https://vite.dev/)
 - [Vue Router](https://router.vuejs.org/)
 - [Vite Configuration Reference](https://vite.dev/config/)
 
-## 🔗 Repositorio
+##  Repositorio
 
-[GitHub - app-clima-vue](SUSTITUIR_CON_URL_REPO)
+[GitHub - app-clima-vue](https://github.com/astorgaAriel/app-clima-vue/tree/main)
 
-## 📄 Licencia
 
-Este proyecto está disponible bajo licencia libre (especificar si aplica)
-
----
-
-**Desarrollado con ❤️ usando Vue 3 + Vite**
