@@ -90,18 +90,19 @@
 </template>
 
 <script setup>
+import { nextTick } from 'vue'
 const props = defineProps({
   activeRegion: Object
 })
 
 const emit = defineEmits(['region-click'])
 
-const handleMapClick = (e) => {
+const handleMapClick = async (e) => {
   const path = e.target.closest('path')
   if (path && path.hasAttribute('id')) {
     const regionId = path.getAttribute('id')
     emit('region-click', regionId)
-    // Actualizar el color de la región después del click
+    await nextTick()
     updateActiveRegionStyle(regionId)
   }
 }

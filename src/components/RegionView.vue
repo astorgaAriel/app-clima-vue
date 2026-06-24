@@ -14,7 +14,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import Card from './Card.vue'
 import { useWeatherAPI } from '../composables/useWeatherApi'
 
@@ -32,7 +32,7 @@ const cargarClima = async () => {
   }
 }
 
-cargarClima()
+onMounted(cargarClima)
 </script>
 
 <style scoped>
