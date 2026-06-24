@@ -47,7 +47,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { useWeatherAPI } from '../composables/useWeatherApi'
 
@@ -76,7 +76,10 @@ const navigateToCityDetail = () => {
   }
 }
 
-watch(() => props.ciudad, cargarClima, { immediate: true })
+watch(() => props.ciudad, async () => {
+  await nextTick()
+  cargarClima()
+}, { immediate: true })
 </script>
 
 <style scoped>

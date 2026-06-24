@@ -23,12 +23,12 @@ La aplicación cuenta con las siguientes rutas principales:
 
 | Ruta | Componente | Descripción |
 |------|-----------|-------------|
-| `/` o `/home` | `MainLayout` | Vista principal con mapa de regiones y búsqueda de ciudades |
+| `/` o `/home` | `Home` | Vista principal con mapa de regiones y búsqueda de ciudades |
 | `/:nombre` | `CityDetail` | Detalle climático de una ciudad específica |
 
 ### Componentes Principales
 
-- **MainLayout.vue**: Diseño principal con navegación
+- **Home.vue**: Diseño principal con navegación
 - **CityDetail.vue**: Página de detalle de ciudad
 - **Navbar.vue**: Barra de navegación
 - **MapRegion.vue**: Visualización interactiva de regiones

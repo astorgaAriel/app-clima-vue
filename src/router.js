@@ -1,11 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import MainLayout from './components/MainLayout.vue'
+import Home from './components/Home.vue'
 import CityDetail from './components/CityDetail.vue'
 
 const routes = [
   {
     path: '/',
-    component: MainLayout,
+    component: Home,
     alias: '/home'
   },
   {

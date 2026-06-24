@@ -128,7 +128,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, nextTick } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useWeatherAPI } from '../composables/useWeatherApi'
 import { useAlerts } from '../composables/useAlert'
@@ -174,6 +174,7 @@ const getCoordinates = () => {
 const coords = computed(() => getCoordinates())
 
 onMounted(async () => {
+  await nextTick()
   loading.value = true
   try {
     if (!coords.value) {
