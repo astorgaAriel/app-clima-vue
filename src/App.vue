@@ -2,12 +2,14 @@
   <div id="app" class="app" :class="{ 'tema-oscuro': temaOscuro }">
     <Navbar @region-selected="selectRegion" />
     <router-view></router-view>
+    <AppFooter />
   </div>
 </template>
 
 <script setup>
 import { computed } from 'vue'
 import Navbar from './components/Navbar.vue'
+import AppFooter from './components/Footer.vue'
 import { useGlobalRegion } from './composables/useGlobalRegion'
 import { useAuthStore } from './stores/auth'
 
