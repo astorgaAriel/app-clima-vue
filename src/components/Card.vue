@@ -7,10 +7,11 @@
 
     <div class="card-body" v-if="weather">
       <div class="temperature-section">
-        <img :src="weather.iconoAPI" :alt="weather.condicion" class="weather-icon" />
+        <img :src="iconoLocal(weather.condicion)" :alt="weather.condicion" class="weather-icon" />
         <div class="temp-info">
           <div class="temp-current">{{ weather.temp }}{{ unidadLabel }}</div>
           <div class="temp-range">
+            <img :src="tempIcon" alt="temperatura" class="temp-range-icon" />
             <span>Máx: {{ weather.tempMax }}{{ unidadLabel }}</span>
             <span>Mín: {{ weather.tempMin }}{{ unidadLabel }}</span>
           </div>
@@ -21,16 +22,11 @@
 
       <div class="weather-details">
         <div class="detail">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <path d="M9 19c-4.3 1.4 -4.3 -8.5 0 -9.5 0 -5 3 -7 6 -7 .6 0 1.2 0 1.8 .1"/>
-          </svg>
+          <img :src="gotaIcon" alt="humedad" class="detail-icon" />
           <span>{{ weather.humedad }}%</span>
         </div>
         <div class="detail">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <path d="M11 19H5c-1 0 -1 -1 -1 -2V7c0 -1 0 -2 1 -2h14c1 0 2 1 2 2v8"/>
-            <path d="M14.5 4v10"/>
-          </svg>
+          <img :src="vientoIcon" alt="viento" class="detail-icon" />
           <span>{{ weather.viento }} km/h</span>
         </div>
       </div>
@@ -51,6 +47,34 @@ import { ref, computed, watch, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { useWeatherAPI } from '../composables/useWeatherApi'
 import { useAuthStore } from '../stores/auth'
+import imgSoliado from '../assets/img/Soliado.png'
+import imgParcialNublado from '../assets/img/ParcialNublado.png'
+import imgNublado from '../assets/img/Nublado.png'
+import imgLluvia from '../assets/img/lluvia.png'
+import imgTormenta from '../assets/img/tormentaElectrica.png'
+import imgFrio from '../assets/img/frio.png'
+import imgNoche from '../assets/img/noche.png'
+import vientoIcon from '../assets/img/viento.png'
+import gotaIcon from '../assets/img/gota.png'
+import tempIcon from '../assets/img/temp.png'
+
+const esNoche = () => {
+  const h = new Date().getHours()
+  return h >= 20 || h < 6
+}
+
+const iconoLocal = (condicion) => {
+  if (!condicion) return imgSoliado
+  const c = condicion.toLowerCase()
+  if (c.includes('tormenta') || c.includes('trueno') || c.includes('rayo')) return imgTormenta
+  if (c.includes('lluvia') || c.includes('llovizna') || c.includes('chubasco') || c.includes('aguacero')) return imgLluvia
+  if (c.includes('nieve') || c.includes('nevada') || c.includes('aguanieve') || c.includes('granizo') || c.includes('helad') || c.includes('frio') || c.includes('frío')) return imgFrio
+  if (c.includes('niebla') || c.includes('neblina') || c.includes('bruma') || c.includes('cubierto')) return imgNublado
+  if (c.includes('nublado')) return imgNublado
+  if (c.includes('parcialmente') || c.includes('parcial')) return imgParcialNublado
+  if (c.includes('despejado') || c.includes('soleado') || c.includes('sol')) return esNoche() ? imgNoche : imgSoliado
+  return esNoche() ? imgNoche : imgSoliado
+}
 
 const props = defineProps({
   ciudad: Object,
@@ -145,8 +169,23 @@ watch(unidad, () => {
 }
 
 .weather-icon {
-  width: 50px;
-  height: 50px;
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+}
+
+.detail-icon {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  opacity: 0.75;
+}
+
+.temp-range-icon {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+  opacity: 0.7;
 }
 
 .temp-info {
