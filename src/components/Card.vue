@@ -9,10 +9,10 @@
       <div class="temperature-section">
         <img :src="weather.iconoAPI" :alt="weather.condicion" class="weather-icon" />
         <div class="temp-info">
-          <div class="temp-current">{{ weather.temp }}°C</div>
+          <div class="temp-current">{{ weather.temp }}{{ unidadLabel }}</div>
           <div class="temp-range">
-            <span>Máx: {{ weather.tempMax }}°</span>
-            <span>Mín: {{ weather.tempMin }}°</span>
+            <span>Máx: {{ weather.tempMax }}{{ unidadLabel }}</span>
+            <span>Mín: {{ weather.tempMin }}{{ unidadLabel }}</span>
           </div>
         </div>
       </div>
@@ -47,9 +47,10 @@
 </template>
 
 <script setup>
-import { ref, watch, nextTick } from 'vue'
+import { ref, computed, watch, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { useWeatherAPI } from '../composables/useWeatherApi'
+import { useAuthStore } from '../stores/auth'
 
 const props = defineProps({
   ciudad: Object,
@@ -57,13 +58,17 @@ const props = defineProps({
 })
 
 const router = useRouter()
+const authStore = useAuthStore()
 const weather = ref(null)
 const diaActual = new Date().toLocaleDateString('es-CL', { weekday: 'short' })
 
 const { getWeather } = useWeatherAPI()
 
+const unidad = computed(() => authStore.preferencias?.unidad ?? 'C')
+const unidadLabel = computed(() => unidad.value === 'F' ? '°F' : '°C')
+
 const cargarClima = async () => {
-  weather.value = await getWeather(props.ciudad.lat, props.ciudad.lon, props.nombre)
+  weather.value = await getWeather(props.ciudad.lat, props.ciudad.lon, props.nombre, unidad.value)
 }
 
 const navigateToCityDetail = () => {
@@ -80,6 +85,10 @@ watch(() => props.ciudad, async () => {
   await nextTick()
   cargarClima()
 }, { immediate: true })
+
+watch(unidad, () => {
+  cargarClima()
+})
 </script>
 
 <style scoped>

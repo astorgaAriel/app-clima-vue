@@ -11,6 +11,26 @@
       <div class="location-info">
         <span v-if="currentWeather">{{ currentWeather.region }}</span>
       </div>
+
+      <button
+        v-if="authStore.isAuthenticated"
+        class="btn-favorito"
+        :class="{ activo: esFavorito }"
+        @click="toggleFavorito"
+        :title="esFavorito ? 'Quitar de favoritos' : 'Agregar a favoritos'"
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" :fill="esFavorito ? '#f59e0b' : 'none'" stroke="#f59e0b" stroke-width="2">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+        </svg>
+        {{ esFavorito ? 'En favoritos' : 'Agregar a favoritos' }}
+      </button>
+
+      <router-link v-else to="/login" class="btn-favorito-login">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+        </svg>
+        Inicia sesión para guardar
+      </router-link>
     </div>
 
     <div class="content-container">
@@ -39,13 +59,13 @@
         <div class="current-card">
           <div class="current-left">
             <img :src="currentWeather.iconoAPI" :alt="currentWeather.condicion" class="current-icon" />
-            <div class="current-temp">{{ currentWeather.temp }}°C</div>
+            <div class="current-temp">{{ currentWeather.temp }}{{ unidadLabel }}</div>
           </div>
           <div class="current-right">
             <div class="condition-text">{{ currentWeather.condicionDescripcion }}</div>
             <div class="temp-range">
-              <span>Máx: {{ currentWeather.tempMax }}°C</span>
-              <span>Mín: {{ currentWeather.tempMin }}°C</span>
+              <span>Máx: {{ currentWeather.tempMax }}{{ unidadLabel }}</span>
+              <span>Mín: {{ currentWeather.tempMin }}{{ unidadLabel }}</span>
             </div>
             <div class="weather-details">
               <div class="detail-item">
@@ -93,7 +113,7 @@
                 <div class="hora-tiempo">{{ hora.hora }}</div>
                 <img :src="hora.iconoAPI" :alt="hora.condicion" class="hora-icon-small" />
                 <div class="hora-info">
-                  <div class="hora-temp-main">{{ hora.temp }}°</div>
+                  <div class="hora-temp-main">{{ hora.temp }}{{ unidadLabel }}</div>
                   <div class="hora-condicion">{{ hora.condicion }}</div>
                 </div>
                 <div class="hora-stats">
@@ -128,11 +148,12 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed, nextTick } from 'vue'
+import { ref, onMounted, computed, watch, nextTick } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useWeatherAPI } from '../composables/useWeatherApi'
 import { useAlerts } from '../composables/useAlert'
 import { getCiudadesPrincipales } from '../services/regionData'
+import { useAuthStore } from '../stores/auth'
 
 const props = defineProps({
   nombre: String
@@ -142,6 +163,7 @@ const router = useRouter()
 const route = useRoute()
 const { getWeather, getForecast } = useWeatherAPI()
 const { generarAlertas } = useAlerts()
+const authStore = useAuthStore()
 
 const currentWeather = ref(null)
 const forecast = ref(null)
@@ -149,6 +171,24 @@ const alertas = ref([])
 const loading = ref(true)
 const expandedDias = ref({})
 
+const unidad = computed(() => authStore.preferencias?.unidad ?? 'C')
+const unidadLabel = computed(() => unidad.value === 'F' ? '°F' : '°C')
+
+const claveNombre = computed(() =>
+  props.nombre?.toLowerCase().replace(/ /g, '_') ?? ''
+)
+
+const esFavorito = computed(() =>
+  authStore.favoritos.includes(claveNombre.value)
+)
+
+const toggleFavorito = () => {
+  if (esFavorito.value) {
+    authStore.quitarFavorito(claveNombre.value)
+  } else {
+    authStore.agregarFavorito(claveNombre.value)
+  }
+}
 
 const getCoordinates = () => {
   if (history.state?.lat !== undefined && history.state?.lon !== undefined) {
@@ -158,23 +198,20 @@ const getCoordinates = () => {
     }
   }
   const ciudades = getCiudadesPrincipales()
+  const nombreLower = props.nombre?.toLowerCase() ?? ''
   for (const region of Object.values(ciudades)) {
-    const ciudad = region.comunas?.[props.nombre]
-    if (ciudad) {
-      return {
-        lat: ciudad.lat,
-        lon: ciudad.lon
+    for (const [key, coordsEntry] of Object.entries(region.comunas ?? {})) {
+      if (key.toLowerCase() === nombreLower) {
+        return { lat: coordsEntry.lat, lon: coordsEntry.lon }
       }
     }
   }
-
   return null
 }
 
 const coords = computed(() => getCoordinates())
 
-onMounted(async () => {
-  await nextTick()
+const cargarDatos = async () => {
   loading.value = true
   try {
     if (!coords.value) {
@@ -182,23 +219,20 @@ onMounted(async () => {
       return
     }
 
-    currentWeather.value = await getWeather(coords.value.lat, coords.value.lon, props.nombre)
-
-    forecast.value = await getForecast(coords.value.lat, coords.value.lon, props.nombre, 3)
-    
+    currentWeather.value = await getWeather(coords.value.lat, coords.value.lon, props.nombre, unidad.value)
+    forecast.value = await getForecast(coords.value.lat, coords.value.lon, props.nombre, 3, unidad.value)
 
     if (forecast.value && forecast.value.dias.length > 0) {
       expandedDias.value[0] = true
     }
-    
-  
+
     const ciudades = getCiudadesPrincipales()
     const region = Object.values(ciudades).find(r => {
-      return Object.values(r.comunas || {}).some(c => 
+      return Object.values(r.comunas || {}).some(c =>
         Math.abs(c.lat - coords.value.lat) < 0.1 && Math.abs(c.lon - coords.value.lon) < 0.1
       )
     })
-    
+
     if (region) {
       alertas.value = generarAlertas(region)
     }
@@ -207,6 +241,15 @@ onMounted(async () => {
   } finally {
     loading.value = false
   }
+}
+
+onMounted(async () => {
+  await nextTick()
+  await cargarDatos()
+})
+
+watch(unidad, () => {
+  cargarDatos()
 })
 
 const toggleDia = (index) => {
@@ -250,7 +293,50 @@ const toggleDia = (index) => {
 
 .back-button:hover {
   background: #45a049;
-  transform: translateX(-4px);
+  transform: translateX(-2px);
+}
+
+.btn-favorito {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  padding: 10px 18px;
+  background: #fff8e1;
+  border: 2px solid #f59e0b;
+  color: #b45309;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.88rem;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.btn-favorito:hover,
+.btn-favorito.activo {
+  background: #fef3c7;
+}
+
+.btn-favorito-login {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  padding: 10px 16px;
+  background: #f5f5f5;
+  border: 2px solid #ddd;
+  color: #777;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.btn-favorito-login:hover {
+  border-color: #4CAF50;
+  color: #4CAF50;
+  background: #e8f5e9;
 }
 
 .city-name {

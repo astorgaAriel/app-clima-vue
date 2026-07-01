@@ -14,25 +14,32 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import Card from './Card.vue'
 import { useWeatherAPI } from '../composables/useWeatherApi'
+import { useAuthStore } from '../stores/auth'
 
 const props = defineProps({
   region: Object
 })
 
 const { getWeather } = useWeatherAPI()
+const authStore = useAuthStore()
 
 const ciudades = computed(() => props.region?.comunas || {})
+const unidad = computed(() => authStore.preferencias?.unidad ?? 'C')
 
 const cargarClima = async () => {
   for (const [nombre, coords] of Object.entries(ciudades.value)) {
-    await getWeather(coords.lat, coords.lon, nombre)
+    await getWeather(coords.lat, coords.lon, nombre, unidad.value)
   }
 }
 
 onMounted(cargarClima)
+
+watch(unidad, () => {
+  cargarClima()
+})
 </script>
 
 <style scoped>

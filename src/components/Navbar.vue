@@ -6,8 +6,8 @@
         <span class="navbar-title">AppClima</span>
       </div>
 
-      <button 
-        class="hamburger" 
+      <button
+        class="hamburger"
         :class="{ active: isMenuOpen }"
         @click="isMenuOpen = !isMenuOpen"
       >
@@ -21,7 +21,7 @@
           <li class="nav-item">
             <a href="/" class="nav-link active">Home</a>
           </li>
-          
+
           <li class="nav-item dropdown">
             <button class="nav-link dropdown-toggle" @click="isDropdownOpen = !isDropdownOpen">
               Regiones
@@ -29,11 +29,11 @@
                 <path d="M1 1L6 6L11 1" stroke="currentColor" stroke-width="2"/>
               </svg>
             </button>
-            
+
             <ul v-if="isDropdownOpen" class="dropdown-menu">
               <li v-for="(region, id) in regions" :key="id">
-                <a 
-                  href="#" 
+                <a
+                  href="#"
                   class="dropdown-item"
                   @click.prevent="selectRegion(id)"
                 >
@@ -42,18 +42,67 @@
               </li>
             </ul>
           </li>
+
+          <template v-if="authStore.isAuthenticated">
+            <li class="nav-item">
+              <router-link to="/favoritos" class="nav-link" @click="isMenuOpen = false">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                </svg>
+                Favoritos
+              </router-link>
+            </li>
+            <li class="nav-item">
+              <router-link to="/preferencias" class="nav-link" @click="isMenuOpen = false">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="3"/>
+                  <path d="M19.07 4.93l-1.41 1.41M5.34 18.66l-1.41 1.41M12 2v2M12 20v2M4.93 4.93l1.41 1.41M18.66 18.66l1.41 1.41M2 12h2M20 12h2"/>
+                </svg>
+                Preferencias
+              </router-link>
+            </li>
+          </template>
         </ul>
 
         <form @submit.prevent="handleSearch" class="search-form">
-          <input 
+          <input
             v-model="searchQuery"
-            type="text" 
+            type="text"
             placeholder="Buscar región o ciudad"
             class="search-input"
             @keydown="searchQuery"
           />
           <button type="submit" class="search-btn">Buscar</button>
         </form>
+
+        <div v-if="authStore.isAuthenticated" class="user-section">
+          <div class="user-info">
+            <div class="user-avatar">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
+            </div>
+            <span class="user-name">{{ authStore.nombreUsuario }}</span>
+          </div>
+          <button class="btn-logout" @click="handleLogout">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+              <polyline points="16 17 21 12 16 7"/>
+              <line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+            Salir
+          </button>
+        </div>
+
+        <div v-else class="auth-links">
+          <router-link to="/login" class="btn-login" @click="isMenuOpen = false">
+            Iniciar sesión
+          </router-link>
+          <router-link to="/registro" class="btn-register" @click="isMenuOpen = false">
+            Registrarse
+          </router-link>
+        </div>
       </div>
     </div>
   </nav>
@@ -63,9 +112,11 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { getCiudadesPrincipales } from '../services/regionData'
+import { useAuthStore } from '../stores/auth'
 
 const emit = defineEmits(['region-selected'])
 const router = useRouter()
+const authStore = useAuthStore()
 
 const isMenuOpen = ref(false)
 const isDropdownOpen = ref(false)
@@ -78,19 +129,24 @@ const selectRegion = (regionId) => {
   isDropdownOpen.value = false
 }
 
+const handleLogout = () => {
+  authStore.logout()
+  isMenuOpen.value = false
+  router.push('/login')
+}
+
 const handleSearch = () => {
   const query = searchQuery.value.toLowerCase().trim()
   if (!query) return
 
   for (const [regionId, region] of Object.entries(regions)) {
-    // Buscar región
     if (region.region.toLowerCase().includes(query)) {
       selectRegion(regionId)
       searchQuery.value = ''
       return
     }
 
-    for (const [cityKey, coords] of Object.entries(region.comunas)) {
+    for (const [cityKey] of Object.entries(region.comunas)) {
       const cityName = cityKey.replace(/_/g, ' ')
       if (cityName.toLowerCase().includes(query)) {
         const cityNameWithUnderscore = cityName.replace(/ /g, '_')
@@ -292,6 +348,97 @@ const handleSearch = () => {
   box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
 }
 
+.user-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.user-name {
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.btn-logout {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: rgba(255,255,255,0.1);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.btn-logout:hover {
+  background: rgba(229, 57, 53, 0.2);
+  border-color: rgba(229, 57, 53, 0.5);
+  color: #ef9a9a;
+}
+
+.auth-links {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+}
+
+.btn-login {
+  padding: 8px 18px;
+  color: white;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+
+.btn-login:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+.btn-register {
+  padding: 8px 18px;
+  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+  color: white;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 6px;
+  transition: opacity 0.2s;
+}
+
+.btn-register:hover {
+  opacity: 0.9;
+}
+
 /* Responsivo */
 @media (max-width: 768px) {
   .hamburger {
@@ -336,6 +483,13 @@ const handleSearch = () => {
 
   .search-input {
     width: 100%;
+  }
+
+  .user-section,
+  .auth-links {
+    margin-left: 0;
+    width: 100%;
+    justify-content: center;
   }
 }
 </style>
