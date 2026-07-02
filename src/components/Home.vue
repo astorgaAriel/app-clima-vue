@@ -15,6 +15,7 @@
 </template>
 
 <script setup>
+import { nextTick } from 'vue'
 import MapRegion from './MapRegion.vue'
 import RegionView from './RegionView.vue'
 import AlertaClima from './AlertaClima.vue'
@@ -22,8 +23,13 @@ import { useGlobalRegion } from '../composables/useGlobalRegion'
 
 const { activeRegion, selectRegion } = useGlobalRegion()
 
-const handleRegionSelect = (regionId) => {
+const handleRegionSelect = async (regionId) => {
   selectRegion(regionId)
+  await nextTick()
+  const regionView = document.querySelector('.region-view')
+  if (regionView) {
+    regionView.scrollIntoView({ behavior: 'smooth' })
+  }
 }
 </script>
 

@@ -446,6 +446,7 @@ const handleSearch = () => {
   }
 
   .navbar-menu {
+    display: none;
     position: absolute;
     top: 70px;
     left: 0;
@@ -454,14 +455,12 @@ const handleSearch = () => {
     background: rgba(45, 45, 45, 0.98);
     padding: 20px;
     gap: 20px;
-    transform: translateX(-100%);
-    transition: transform 0.3s ease;
     max-height: calc(100vh - 70px);
     overflow-y: auto;
   }
 
   .navbar-menu.active {
-    transform: translateX(0);
+    display: flex;
   }
 
   .navbar-nav {
